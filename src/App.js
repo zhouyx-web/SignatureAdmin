@@ -1,15 +1,17 @@
-import AntdTest from './components/antd-test/index'
-import {Button} from 'antd'
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
-import './App.less';
+import Login from './pages/login/login'
+import Admin from './pages/admin/admin'
 
-function App() {
+export default function App() {
   return (
     <div className="App">
-      <AntdTest />
-      <Button type="ghost">测试</Button>
+      <BrowserRouter>
+        <Switch>
+          <Route path="/login" component={ Login }></Route>
+          <Route path="/" component={ Admin }></Route>
+        </Switch>
+      </BrowserRouter>
     </div>
   );
 }
-
-export default App;
