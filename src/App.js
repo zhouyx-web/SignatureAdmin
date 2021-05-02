@@ -2,6 +2,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 import Login from './pages/login/login'
 import Admin from './pages/admin/admin'
+import './App.less'
 
 export default function App() {
   return (
