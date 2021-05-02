@@ -8,7 +8,7 @@ import routeConfig from '../../config/routeConfig'
 import './index.less'
 const { SubMenu } = Menu
 
-const generateMenuItem = (menuConfig, setOpenKeys) => {
+const generateMenuItem = (menuConfig, setOpenKeys, openKeys) => {
     return menuConfig.reduce((preValue, menuItem) => {
         // 不存在子菜单
         if(!menuItem.children){
@@ -23,7 +23,9 @@ const generateMenuItem = (menuConfig, setOpenKeys) => {
                     key={menuItem.path} 
                     icon={menuItem.icon} 
                     title={menuItem.title}
-                    onTitleClick={e => setOpenKeys(e.key)}
+                    onTitleClick={e => {
+                        openKeys === e.key ? setOpenKeys('') : setOpenKeys(e.key)
+                    }}
                 >
                     {generateMenuItem(menuItem.children)}
                 </SubMenu>
@@ -59,7 +61,7 @@ function LeftNav (_window) {
             style={{backgroundColor:'#fafafa'}}
         >
             {/* 生成左侧导航内容 ReactNodes */}
-            { generateMenuItem(menuConfig, setOpenKeys) }
+            { generateMenuItem(menuConfig, setOpenKeys, openKeys) }
         </Menu>
         </>
     )
