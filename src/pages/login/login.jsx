@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Form, Input, Button, Alert } from 'antd';
+import { Form, Input, Button, Alert, message, } from 'antd';
 import { 
     AntDesignOutlined,
     UserOutlined, 
@@ -7,12 +7,17 @@ import {
 } from '@ant-design/icons'
 
 import './login.less'
+import { reqLogin } from '../../api/index'
+import memoryUtils from '../../utils/memoryUtils'
+import storageUtils from '../../utils/storageUtils'
 
 //用户名校验规则 
 const accountValidator = (rule, value) => {
-    const phoneReg = /^1[3-578]\d{9}$/
-    const mailReg = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/
-    if( phoneReg.test(value) || mailReg.test(value)){
+    // const phoneReg = /^1[3-578]\d{9}$/
+    // const mailReg = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/
+    const usernameReg = /^\w{3,11}$/
+    // if( phoneReg.test(value) || mailReg.test(value)){
+    if( usernameReg.test(value)){
         return Promise.resolve()
     }else{
         return Promise.reject("请输入有效的账户")
@@ -30,8 +35,11 @@ const pwdValidator = (rule, value) => {
 
 export default function Login(_window) {
 
+    if(memoryUtils.user.username) _window.history.replace('/')
+
     const [ visible, setVisible ] = useState(false)
     const [ loading, setLoading ] = useState(false)
+    const [ errmsg, setErrmsg ] = useState('')
 
     const handleClose = () => {
         setVisible(false);
@@ -39,17 +47,23 @@ export default function Login(_window) {
 
     // 账户和密码校验成功，在此处发送请求
     const onFinish = async (values) => {
-        setLoading(true)
-        setVisible(false)
+        setLoading(true) // 按钮加载状态
+        setVisible(false) // 登录失败提示框
         const { username, password } = values
-        const loginResult = await new Promise((resolve, reject) => {
-            setTimeout(() => {
-                resolve({message:'success'})
-            }, 1000)
-        })
+        const loginResult = await reqLogin(username, password)
         setLoading(false)
-        // _window.history.replace('/')
-        setVisible(true)
+        if(!loginResult.status){// login success
+            message.success('登录成功！')
+            const {data} = loginResult
+            // 将用户信息存入内存与localStorage
+            memoryUtils.user = data
+            storageUtils.saveUser(data)
+            // 跳转至主页面 一定要将用户信息存入之后再跳转。因为在主界面中也存在判断用户是否存在，此时用户还未存储，就又跳转到登录界面
+            _window.history.replace('/')
+        } else {//login failed
+            setVisible(true)
+            setErrmsg(loginResult.msg)
+        }
     };
 
     const onFinishFailed = (errorInfo) => {
@@ -68,7 +82,7 @@ export default function Login(_window) {
                     {
                         visible ? (
                             <Alert 
-                                message="用户名或者密码错误" 
+                                message={errmsg} 
                                 type="error" 
                                 showIcon 
                                 closable
@@ -89,7 +103,7 @@ export default function Login(_window) {
                         rules={[{ validator: accountValidator }]}
                     >
                         <Input 
-                            placeholder="请输入手机号或者邮箱地址"
+                            placeholder="数字字母下划线3-11位"
                             prefix={<UserOutlined className="site-form-item-icon" />}
                         />
                     </Form.Item>
