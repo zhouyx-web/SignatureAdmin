@@ -6,3 +6,5 @@ import ajax from './ajax'
 
 // 登录请求
 export const reqLogin = (username, password) => ajax('/manage/user/login', {username, password}, 'POST')
+// 文件删除请求
+export const reqDeleteFile = (doc_name, doc_id) => ajax('/manage/docs/delete', {doc_name, doc_id}, 'POST')

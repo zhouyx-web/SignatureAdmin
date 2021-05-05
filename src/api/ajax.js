@@ -11,7 +11,7 @@ import {message} from 'antd'
     响应数据，不用再读取一次
 */
 export default function ajax (url, data={}, method='GET'){
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
         let promise
         // 发送请求
         if(method === 'GET'){
@@ -24,7 +24,7 @@ export default function ajax (url, data={}, method='GET'){
         promise.then(response => {
             resolve(response.data)
         })
-        // 请求失败，提前处理失败请求的处理，就不用在调用时处理，减少重复代码
+        // 请求失败 捕获失败的Promise
         .catch(error => {
             message.error(error.message)
         })

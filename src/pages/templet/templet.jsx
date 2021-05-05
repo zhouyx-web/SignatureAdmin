@@ -8,7 +8,7 @@ export default function Templet (){
     return (
         <>
         <Breadcrumb separator=">" style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item overlay={menu}><a href="">创建面签</a></Breadcrumb.Item>
+            <Breadcrumb.Item overlay={menu}><span style={{cursor: 'pointer'}}>创建面签</span></Breadcrumb.Item>
             <Breadcrumb.Item>使用模板</Breadcrumb.Item>
         </Breadcrumb>
         </>
