@@ -28,6 +28,10 @@ class PicturesWall extends Component {
         previewImage: '',
         fileList: [],
     };
+    // 获取组件内部的fileList元素对应的文件标识
+    getFileListDetail = () => {
+        return this.state.fileList.map(item => item.uid)
+    }
 
     // 隐藏预览对话框
     handleCancel = () => this.setState({ previewVisible: false });
@@ -56,15 +60,13 @@ class PicturesWall extends Component {
                 // 新创建一个简单的文件状态
                 const newFile = {
                     // 用于删除数据库中文件数据的标识
-                    uid:result.data.fileInfo.doc_id,
+                    uid:result.data.doc_id,
                     // 用于页面展示的名称
-                    name:result.data.fileInfo.doc_title,
-                    // 用于删除磁盘中文件内容的标识
-                    doc_name:result.data.name,
+                    name:result.data.doc_name,
                     // 文件状态
                     status:file.status,
                     // 文件url
-                    url:result.data.url
+                    url:result.data.doc_path + '/' + result.data.doc_id
                 }
                 // 删除fileList最后一个元素，也就是刚上传完毕的图片
                 fileList.pop()
@@ -76,7 +78,7 @@ class PicturesWall extends Component {
             
         } else if (file.status === 'removed'){
             // 发送请求删除文件
-            const result = await reqDeleteFile(file.doc_name, file.uid)
+            const result = await reqDeleteFile(file.uid)
             if(result.status === 0){
                 message.success("文件删除成功！")
             }
@@ -125,6 +127,7 @@ class PicturesWall extends Component {
                 <Upload
                     // 上传地址
                     action="/manage/docs/upload"
+                    // accept=".pdf"
                     // 文件参数名
                     name={FILE_UPLOAD_PARAMS}
                     // 照片墙格式
