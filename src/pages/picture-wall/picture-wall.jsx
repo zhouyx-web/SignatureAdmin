@@ -127,7 +127,7 @@ class PicturesWall extends Component {
                 <Upload
                     // 上传地址
                     action="/manage/docs/upload"
-                    // accept=".pdf"
+                    accept=".pdf"
                     // 文件参数名
                     name={FILE_UPLOAD_PARAMS}
                     // 照片墙格式
