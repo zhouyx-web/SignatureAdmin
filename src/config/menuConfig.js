@@ -22,14 +22,14 @@ const menuConfig = [
         path: '/creator',
         children: [
             {
-                title: '新建面签',
+                title: '新建文档',
                 icon: <FileAddOutlined />,
                 path: '/newfile'
             },
             {
-                title: '上传文件',
+                title: '上传文档',
                 icon: <UploadOutlined />,
-                path: '/upload'
+                path: '/uploadfile'
             },
             {
                 title: '使用模板',
@@ -39,7 +39,7 @@ const menuConfig = [
         ]
     },
     {
-        title: '我的面签',
+        title: '我的文档',
         icon: <UnorderedListOutlined />,
         path: '/manage',
         children: [

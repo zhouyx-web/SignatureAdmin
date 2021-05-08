@@ -40,7 +40,11 @@ function LeftNav (_window) {
     const [openKeys, setOpenKeys] = useState('')
     // 设置选中的菜单项Item
     let path = _window.location.pathname
-    if(path === '/') {path = '/home'}
+    if(path === '/') {
+        path = '/home'
+    }else if (path.indexOf('/uploadfile')===0){
+        path = '/uploadfile'
+    }
     // 当path变化时，修改openKeys
     useEffect(() => {
         const subMenu = routeConfig.find(item => item.path === path) || {}
