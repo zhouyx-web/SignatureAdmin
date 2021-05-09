@@ -18,6 +18,7 @@ export default function DocEditor(props) {
     const [pageNumber, setPageNumber] = useState(1);
     const [signAreaDisable, setSignAreaDisable] = useState('none')
     const [existSignArea, setExistSignArea] = useState(false)
+    const [isDocRelease, setIsDocRelease] = useState(false)
     const pdfContainerRef = useRef(null)
     const pdfDocRef = useRef(null)
     const signAreaRef = useRef(null)
@@ -129,7 +130,7 @@ export default function DocEditor(props) {
         const height = signAreaRef.current.offsetHeight
         return { left, top, width, height }
     }
-    const saveSetting = async (isDocRelease) => {
+    const saveSetting = async () => {
         if(!existSignArea) {
             message.warning('请设置签名区域')
             return
@@ -137,7 +138,7 @@ export default function DocEditor(props) {
         // 保存面签设置，但是不发布，也就是不更新doc_status
         // 设置 sign_area 需要doc_id
         const sign_area = JSON.stringify(getSignAreaInfo())
-        const result = await reqMidRelease({ sign_area, doc_id })
+        const result = await reqMidRelease({ sign_area, doc_id, valid_time })
         if (result.status === 0) {
             // 保存成功
             message.success('签署区域设置保存成功')
@@ -157,8 +158,9 @@ export default function DocEditor(props) {
             message.warning('请设置签名区域')
             return
         }
+        setIsDocRelease(true)
         // 先保存区域设置信息
-        saveSetting(true).then(async() => {
+        saveSetting().then(async() => {
             // 设置 release_time/end_time/doc_status/ 需要doc_id
             const release_time = Date.now()
             let end_time
