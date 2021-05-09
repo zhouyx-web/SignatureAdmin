@@ -1,13 +1,15 @@
 import React, {useState, useEffect} from 'react'
-import { Breadcrumb, Table, Space, Button } from 'antd'
+import { Breadcrumb, Table, Space, Button, message } from 'antd'
 import BreadcrumbItemCreator from '../../components/breadcrumb-item/index'
-import {reqDocList} from '../../api/index'
+import {reqDocList, reqEndSign} from '../../api/index'
 import dateToString from '../../utils/dateUtils'
 // 导入测试数据
 // import testData from '../../config/testDataConfig'
 
 // 生成可下拉的面包屑菜单
 const menu = BreadcrumbItemCreator('/manage')
+// let setListData
+let history
 
 const columns = [
     {
@@ -22,6 +24,7 @@ const columns = [
       title: '面签名称',
       dataIndex: 'doc_name',
       key: 'doc_name',
+      width: 250,
       ellipsis: true,
     },
     {
@@ -70,7 +73,19 @@ const columns = [
       render: (text, item) => (
         <Space size="middle">
             <Button size='small' type="primary">二维码</Button>
-            <Button size='small' type="primary">结束</Button>
+            <Button size='small' type="primary" onClick={async () => {
+              let {doc_id, doc_path, sign_area} = item
+              sign_area = JSON.parse(sign_area)
+              const result = await reqEndSign({end_time:Date.now(), doc_id, doc_path, sign_area})
+              if(result.status === 0){
+                message.success('签署已完成')
+                // getDataSource(setListData)
+                // 跳转至完成签署界面
+                history.push('/complete')
+              } else {
+                message.error('操作失败，请重试')
+              }
+            }}>结束</Button>
         </Space>
       ),
     },
@@ -82,8 +97,11 @@ const getDataSource = async setData => {
   }
 }
 
-export default function OnGoing (){
+export default function OnGoing (props){
     const [ data, setData ] = useState([])
+    // 赋值为全局变量，便于其他函数调用
+    // setListData = setData
+    history = props.history
     useEffect(() => {
         getDataSource(setData)
     }, [])

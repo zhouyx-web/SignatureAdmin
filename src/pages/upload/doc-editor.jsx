@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
 import { Skeleton, Button, message } from 'antd';
 import './doc-editor.less'
@@ -13,7 +13,7 @@ export default function DocEditor(props) {
         props.history.replace('/uploadfile')
     }
     // 取出传递的文档信息
-    const { doc_id, valid_time, max_sign_num } = props.location.state
+    const { doc_id, valid_time } = props.location.state
     const [numPages, setNumPages] = useState(null);
     const [pageNumber, setPageNumber] = useState(1);
     const [signAreaDisable, setSignAreaDisable] = useState('none')
@@ -128,15 +128,15 @@ export default function DocEditor(props) {
         const top = signAreaRef.current.offsetTop
         const width = signAreaRef.current.offsetWidth
         const height = signAreaRef.current.offsetHeight
-        return { left, top, width, height }
+        return { pageNumber, left, top, width, height }
     }
     const saveSetting = async () => {
         if(!existSignArea) {
             message.warning('请设置签名区域')
             return
         }
-        // 保存面签设置，但是不发布，也就是不更新doc_status
-        // 设置 sign_area 需要doc_id
+        // 保存面签设置，但是不发布
+        // 设置 sign_area valid_time 需要doc_id
         const sign_area = JSON.stringify(getSignAreaInfo())
         const result = await reqMidRelease({ sign_area, doc_id, valid_time })
         if (result.status === 0) {

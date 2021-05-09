@@ -16,3 +16,5 @@ export const reqMidRelease = signArea => ajax('/manage/docs/release/second', sig
 export const reqRelease = releaseOptions => ajax('/manage/docs/release/end', releaseOptions, 'POST')
 // 获取文档列表
 export const reqDocList = doc_status => ajax('/manage/docs/list', {doc_status})
+// 结束签署
+export const reqEndSign = endOptions => ajax('/manage/docs/sign-end', endOptions, 'POST')

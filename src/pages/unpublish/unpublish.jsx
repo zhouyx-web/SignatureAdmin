@@ -8,7 +8,9 @@ import dateToString from '../../utils/dateUtils'
 
 // 生成可下拉的面包屑菜单
 const menu = BreadcrumbItemCreator('/manage')
-let getListData
+// let setListData
+let history
+
 const columns = [
   {
     title: '编号',
@@ -54,21 +56,26 @@ const columns = [
     render: (text, item) => (
       <Space size="middle">
         <Button size='small' type="primary">编辑</Button>
-        <Button size='small' type="primary" onClick={async () => {
-          const { valid_time, doc_id } = item
-          const release_time = Date.now()
-          let end_time
-          if (valid_time === 0) {
-            end_time = 0
-          } else { end_time = release_time + valid_time * 60 * 1000 }
-          const result = await reqRelease({release_time, end_time, doc_id, doc_status:'ongoing'})
-          if(result.status === 0){
-            message.success('文档发布成功')
-            getDataSource(getListData)
-          } else {
-            message.error('文档发布失败')
-          }
-        }}>发布</Button>
+        <Button
+          size='small'
+          type="primary"
+          onClick={async () => {
+            const { valid_time, doc_id } = item
+            const release_time = Date.now()
+            let end_time
+            if (valid_time === 0) {
+              end_time = 0
+            } else { end_time = release_time + valid_time * 60 * 1000 }
+            const result = await reqRelease({ release_time, end_time, doc_id, doc_status: 'ongoing' })
+            if (result.status === 0) {
+              message.success('文档发布成功')
+              // getDataSource(setListData)
+              history.push('/ongoing')
+            } else {
+              message.error('文档发布失败')
+            }
+          }}
+        >发布</Button>
       </Space>
     ),
   },
@@ -80,12 +87,14 @@ const getDataSource = async setData => {
   }
 }
 
-export default function UnPublish() {
+export default function UnPublish(props) {
   const [data, setData] = useState([])
+  // setListData = setData
+  history = props.history
+  // console.log(history)
   useEffect(() => {
     getDataSource(setData)
   }, [])
-  getListData = setData
   return (
     <>
       <Breadcrumb separator=">" style={{ margin: '16px 0' }}>
