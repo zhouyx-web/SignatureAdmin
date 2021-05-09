@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from 'react'
 import { Breadcrumb, Table, Space, Button } from 'antd'
 import BreadcrumbItemCreator from '../../components/breadcrumb-item/index'
+import {reqDocList} from '../../api/index'
+import dateToString from '../../utils/dateUtils'
 // 导入测试数据
-import testData from '../../config/testDataConfig'
+// import testData from '../../config/testDataConfig'
 
 // 生成可下拉的面包屑菜单
 const menu = BreadcrumbItemCreator('/manage')
@@ -10,40 +12,62 @@ const menu = BreadcrumbItemCreator('/manage')
 const columns = [
     {
       title: '编号',
-      dataIndex: 'number',
-      key: 'number',
+      dataIndex: '_id',
+      key: '_id',
       width: 100,
+      ellipsis: true,
+      render:(text, item, index) => {return index + 1}
     },
     {
       title: '面签名称',
-      dataIndex: 'fileName',
-      key: 'fileName',
+      dataIndex: 'doc_name',
+      key: 'doc_name',
       ellipsis: true,
     },
     {
       title: '面签类型',
-      dataIndex: 'fileType',
-      key: 'fileType',
+      dataIndex: 'doc_mode',
+      key: 'doc_mode',
       width: 100,
+      render:(text, item) => {
+        const {doc_mode} = item
+        if(doc_mode === 'single'){
+          return '一份一签'
+        } else {
+          return '一份多签'
+        }
+      }
     },
     {
       title: '发布时间',
-      dataIndex: 'releaseTime',
-      key: 'releaseTime',
+      dataIndex: 'release_time',
+      key: 'release_time',
       width: 150,
+      render: (text, item) => {
+        const {release_time} = item
+        return dateToString(release_time)
+      }
     },
     {
       title: '签署状态',
-      dataIndex: 'status',
-      key: 'status',
+      dataIndex: 'signed_num',
+      key: 'signed_num',
       width: 100,
+      render: (text, item) => {
+        const {re_sign} = item
+        if(re_sign === 'allow'){
+          return '首签'
+        } else {
+          return '补签'
+        }
+      }
     },
     {
       title: '操作',
       dataIndex: 'operation',
       key: 'operation',
       align:'center',
-      render: (index, item) => (
+      render: (text, item) => (
         <Space size="middle">
             <Button size='small' type="primary">二维码</Button>
             <Button size='small' type="primary">结束</Button>
@@ -51,8 +75,11 @@ const columns = [
       ),
     },
 ]
-const getDataSource = setData => {
-    setData(testData)
+const getDataSource = async setData => {
+  const result = await reqDocList('ongoing')
+  if(result.status === 0){
+    setData(result.data)
+  }
 }
 
 export default function OnGoing (){
@@ -69,10 +96,11 @@ export default function OnGoing (){
         <Table 
             columns={columns} 
             dataSource={data}
+            rowKey={(item) => item.doc_id}
             pagination={{ 
                 pageSize: 3, 
                 showQuickJumper: true,
-                total: 20,
+                total: data.length,
                 position: ['bottomCenter']
             }}
         />

@@ -14,3 +14,5 @@ export const reqPrepareRelease = updateOptions => ajax('/manage/docs/release/fir
 export const reqMidRelease = signArea => ajax('/manage/docs/release/second', signArea, 'POST')
 // 文档最终发布请求
 export const reqRelease = releaseOptions => ajax('/manage/docs/release/end', releaseOptions, 'POST')
+// 获取文档列表
+export const reqDocList = doc_status => ajax('/manage/docs/list', {doc_status})

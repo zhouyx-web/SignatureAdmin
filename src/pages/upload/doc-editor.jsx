@@ -163,11 +163,11 @@ export default function DocEditor(props) {
             const release_time = Date.now()
             let end_time
             if (!valid_time) {
-                end_time = 'forever'
+                end_time = 0
             } else {
                 end_time = release_time + valid_time * 60 * 1000
             }
-            const doc_status = 'release'
+            const doc_status = 'ongoing'
             const releaseResult = await reqRelease({release_time, end_time, doc_status, doc_id})
             if(releaseResult.status === 0){
                 message.success('文档发布成功')
