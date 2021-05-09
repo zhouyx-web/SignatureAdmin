@@ -27,7 +27,7 @@ const fileNameValidator = (rule, value) => {
     }
 }
 
-export default function NewFile() {
+export default function Upload(_window) {
     const [numDisable, setNumDisable] = useState(true)
 
     const pictureWallRef = useRef(null)
@@ -47,6 +47,8 @@ export default function NewFile() {
             const result = await reqPrepareRelease(updateOptions)
             if (result.status === 0) {
                 message.success('文档设置保存成功！')
+                // 跳转至签署域设置界面 传递参数 doc_id valid_time max_sign_num ...
+                _window.history.push('/uploadfile/doc-editor', {...updateOptions})
             } else {
                 message.error(result.msg)
             }
@@ -70,7 +72,7 @@ export default function NewFile() {
                     initialValues={{
                         doc_mode: 'single',
                         max_sign_num: 1,
-                        valid_time: 5,
+                        valid_time: 0,
                         re_sign: 'reject'
                     }}
                 >
