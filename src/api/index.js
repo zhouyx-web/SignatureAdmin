@@ -18,3 +18,5 @@ export const reqRelease = releaseOptions => ajax('/manage/docs/release/end', rel
 export const reqDocList = doc_status => ajax('/manage/docs/list', {doc_status})
 // 结束签署
 export const reqEndSign = endOptions => ajax('/manage/docs/sign-end', endOptions, 'POST')
+// 签署用户登记接口
+export const reqGetUid = () => ajax('/manage/user/get-uid')

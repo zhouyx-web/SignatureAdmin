@@ -3,6 +3,7 @@
  */
 import store from 'store'
 const USER_KEY = 'user_key'
+const USER_UID = 'uid'
 const storeModel = {
   /*
   保存user
@@ -26,6 +27,14 @@ const storeModel = {
   removeUser () {
     // localStorage.removeItem(USER_KEY)
     store.remove(USER_KEY)
+  },
+  // 添加签署用户的UID
+  saveUid(uid){
+    store.set(USER_UID, uid)
+  },
+  // 获取签署用户的UID
+  getUid(){
+    return {uid:store.get(USER_UID)} || {}
   }
 }
 

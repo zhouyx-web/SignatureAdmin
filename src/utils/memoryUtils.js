@@ -4,5 +4,6 @@
  */
 const userStorage = {
   user: {}, // 保存当前登陆的user
+  signer: {} // 保存当前签署用户的信息
 }
 export default userStorage
