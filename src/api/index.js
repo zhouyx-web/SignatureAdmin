@@ -20,3 +20,7 @@ export const reqDocList = doc_status => ajax('/manage/docs/list', {doc_status})
 export const reqEndSign = endOptions => ajax('/manage/docs/sign-end', endOptions, 'POST')
 // 签署用户登记接口
 export const reqGetUid = () => ajax('/manage/user/get-uid')
+// 获取单个签署文件信息
+export const reqDocInfo = (doc_id) => ajax('/manage/docs/get-doc', {doc_id})
+// 记录用户开始签署
+export const reqStartSign = (doc_id, uid) => ajax('/manage/sign/start-sign', {doc_id, uid}, 'POST')

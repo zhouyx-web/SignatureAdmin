@@ -28,7 +28,7 @@ export default function DocEditor(props) {
         setNumPages(numPages);
     }
     function onDocumentLoadError(err) {
-        alert('文档加载失败！原因:' + err.message)
+        message.error('文档加载失败！原因:' + err.message)
     }
 
     const go = () => {
