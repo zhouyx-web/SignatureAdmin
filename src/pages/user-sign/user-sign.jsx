@@ -83,7 +83,7 @@ export default function UserSign(props) {
                     <Page pageNumber={pageNumber} scale={0.65} />
                 </Document>
             </div>
-            <div className="top-control-panel">
+            <div className="bottom-control-panel">
                 <div className="page-controls">
                     <Button type='text' onClick={back}>{'<'}</Button>
                     <span>{pageNumber} of {numPages}</span>

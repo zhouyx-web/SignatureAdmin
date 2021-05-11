@@ -44,6 +44,8 @@ function LeftNav (_window) {
         path = '/home'
     }else if (path.indexOf('/uploadfile')===0){
         path = '/uploadfile'
+    }else if(path.indexOf('/complete')===0){
+        path = '/complete'
     }
     // 当path变化时，修改openKeys
     useEffect(() => {

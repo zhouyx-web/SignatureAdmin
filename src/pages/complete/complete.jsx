@@ -5,6 +5,7 @@ import {reqDocList} from '../../api/index'
 import dateToString from '../../utils/dateUtils'
 // 导入测试数据
 // import testData from '../../config/testDataConfig'
+let history
 
 // 生成可下拉的面包屑菜单
 const menu = BreadcrumbItemCreator('/manage')
@@ -75,7 +76,7 @@ const columns = [
       render: (text, item) => (
         <Space size="middle">
             <Button size='small' type="primary">补签</Button>
-            <Button size='small' type="primary">详情</Button>
+            <Button size='small' type="primary" onClick={() => showSignDetail(item)}>详情</Button>
             <Button size='small' type="primary">下载</Button>
         </Space>
       ),
@@ -88,9 +89,15 @@ const getDataSource = async setData => {
   }
 }
 
+const showSignDetail = item => {
+  history.push('/complete/detail', {...item})
+}
 
-export default function Complete (){
+
+export default function Complete (props){
     const [ data, setData ] = useState([])
+    history = props.history
+    console.log(props)
     useEffect(() => {
         getDataSource(setData)
     }, [])
