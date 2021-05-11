@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from 'react'
 import { Breadcrumb, Table, Space, Button } from 'antd'
 import BreadcrumbItemCreator from '../../components/breadcrumb-item/index'
-import {reqDocList} from '../../api/index'
+import {reqDocList, reqDownload} from '../../api/index'
 import dateToString from '../../utils/dateUtils'
+import fileDownload from 'js-file-download'
+import Axios from 'axios';
 // 导入测试数据
 // import testData from '../../config/testDataConfig'
 let history
@@ -14,7 +16,7 @@ const columns = [
       title: '编号',
       dataIndex: '_id',
       key: '_id',
-      width: 100,
+      width: 70,
       ellipsis: true,
       render:(text, item, index) => {return index + 1}
     },
@@ -42,7 +44,8 @@ const columns = [
       title: '发布时间',
       dataIndex: 'release_time',
       key: 'release_time',
-      width: 150,
+      width: 180,
+      align:'center',
       render: (text, item) => {
         const {release_time} = item
         return dateToString(release_time)
@@ -52,7 +55,8 @@ const columns = [
       title: '结束时间',
       dataIndex: 'end_time',
       key: 'end_time',
-      width: 150,
+      align:'center',
+      width: 180,
       render: (text, item) => {
         const {end_time} = item
         return dateToString(end_time)
@@ -63,6 +67,7 @@ const columns = [
       dataIndex: 'signState',
       key: 'signState',
       width: 100,
+      align:'center',
       render: (text, item) => {
         const {max_sign_num, signed_num} = item
         return signed_num + '/' + max_sign_num
@@ -77,16 +82,26 @@ const columns = [
         <Space size="middle">
             <Button size='small' type="primary">补签</Button>
             <Button size='small' type="primary" onClick={() => showSignDetail(item)}>详情</Button>
-            <Button size='small' type="primary">下载</Button>
+            <Button size='small' type="primary" onClick={() => downloadSignDoc(item)}>下载</Button>
         </Space>
       ),
     },
 ]
 const getDataSource = async setData => {
-  const result = await reqDocList('end')
+  const result = await reqDocList('end','end_time')
   if(result.status === 0){
     setData(result.data)
   }
+}
+
+const downloadSignDoc = async item => {
+  const {doc_id} = item
+  Axios.get('/manage/docs/download', {
+    responseType: 'blob',
+    params:{doc_id}
+  }).then(res => {
+    fileDownload(res.data, item.doc_name + '.pdf');
+  });
 }
 
 const showSignDetail = item => {
@@ -112,7 +127,7 @@ export default function Complete (props){
             dataSource={data}
             rowKey={(item) => item.doc_id}
             pagination={{ 
-                pageSize: 3, 
+                pageSize: 6, 
                 showQuickJumper: true,
                 total: data.length,
                 position: ['bottomCenter']

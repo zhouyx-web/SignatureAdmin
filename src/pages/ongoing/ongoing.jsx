@@ -46,7 +46,7 @@ const columns = [
     title: '发布时间',
     dataIndex: 'release_time',
     key: 'release_time',
-    width: 150,
+    width: 180,
     render: (text, item) => {
       const { release_time } = item
       return dateToString(release_time)
@@ -71,6 +71,7 @@ const columns = [
     dataIndex: 'operation',
     key: 'operation',
     align: 'center',
+    width: 200,
     render: (text, item) => (
       <Space size="middle">
         <Button size='small' type="primary" onClick={() => showQRCode(item)}>二维码</Button>
@@ -112,7 +113,7 @@ const handleEndClick = async item => {
 }
 
 const getDataSource = async setData => {
-  const result = await reqDocList('ongoing')
+  const result = await reqDocList('ongoing','release_time')
   if (result.status === 0) {
     setData(result.data)
   }
@@ -137,7 +138,7 @@ export default function OnGoing(props) {
         dataSource={data}
         rowKey={(item) => item.doc_id}
         pagination={{
-          pageSize: 3,
+          pageSize: 6,
           showQuickJumper: true,
           total: data.length,
           position: ['bottomCenter']

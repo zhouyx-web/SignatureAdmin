@@ -15,7 +15,7 @@ export const reqMidRelease = signArea => ajax('/manage/docs/release/second', sig
 // 文档最终发布请求
 export const reqRelease = releaseOptions => ajax('/manage/docs/release/end', releaseOptions, 'POST')
 // 获取文档列表
-export const reqDocList = doc_status => ajax('/manage/docs/list', {doc_status})
+export const reqDocList = (doc_status, time_type) => ajax('/manage/docs/list', {doc_status, time_type})
 // 结束签署
 export const reqEndSign = endOptions => ajax('/manage/docs/sign-end', endOptions, 'POST')
 // 签署用户登记接口
@@ -26,3 +26,5 @@ export const reqDocInfo = (doc_id) => ajax('/manage/docs/get-doc', {doc_id})
 export const reqStartSign = (doc_id, uid) => ajax('/manage/sign/start-sign', {doc_id, uid}, 'POST')
 // 用户提交签名
 export const reqCommitSign = (doc_id, uid, imgBase64) => ajax('/manage/sign/commit',{doc_id, uid, imgBase64}, 'POST')
+// 下载签署好的文件
+export const reqDownload = doc_id => ajax('/manage/docs/download', {doc_id})

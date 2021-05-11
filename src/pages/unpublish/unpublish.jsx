@@ -81,7 +81,7 @@ const columns = [
   },
 ]
 const getDataSource = async setData => {
-  const result = await reqDocList('unpublish')
+  const result = await reqDocList('unpublish', 'create_time')
   if (result.status === 0) {
     setData(result.data)
   }
@@ -106,7 +106,7 @@ export default function UnPublish(props) {
         dataSource={data}
         rowKey={(item) => item.doc_id}
         pagination={{
-          pageSize: 3,
+          pageSize: 6,
           showQuickJumper: true,
           total: data.length,
           position: ['bottomCenter']
