@@ -1,0 +1,44 @@
+@media screen and (orientation: portrait) {
+ 
+    .main {
+        position: absolute;
+        width: 100vh;
+        height: 100vw;
+        top: 0;
+        left: 100vw;
+        -webkit-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
+        transform: rotate(90deg);
+        transform-origin: 0% 0%;
+    }
+}
+
+@media screen and (orientation: landscape) {
+    .main {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+    }
+}
+.wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    .signature-pad {
+        width: 600px;
+        height: 250px;
+    }
+}
+.btn{
+    display: flex;
+    width: 400px;
+    margin: 10px auto;
+    justify-content: space-around;
+}

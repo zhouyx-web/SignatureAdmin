@@ -58,11 +58,13 @@ export default function UserSign(props) {
 
     const startSign = async() => {
         // 点击开始签署，在sign表添加一条签署记录，表示开始签署，在提交签名后才算完成签署
-        const result = await reqStartSign(doc_id, signer.uid)
+        const uid = signer.uid
+        const result = await reqStartSign(doc_id, uid)
         if(result.status === 0){
-            message.success('开始签署了')
+            // 跳转至签名版界面
+            props.history.push('/user-sign/signature-board',{doc_id, uid})
         } else {
-            message.error('您已经签署过了')
+            message.error(result.msg)
         }
     }
     

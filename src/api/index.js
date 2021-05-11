@@ -24,3 +24,5 @@ export const reqGetUid = () => ajax('/manage/user/get-uid')
 export const reqDocInfo = (doc_id) => ajax('/manage/docs/get-doc', {doc_id})
 // 记录用户开始签署
 export const reqStartSign = (doc_id, uid) => ajax('/manage/sign/start-sign', {doc_id, uid}, 'POST')
+// 用户提交签名
+export const reqCommitSign = (doc_id, uid, imgBase64) => ajax('/manage/sign/commit',{doc_id, uid, imgBase64}, 'POST')
