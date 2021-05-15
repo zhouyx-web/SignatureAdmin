@@ -12,6 +12,7 @@ import {
 
 import {FILE_UPLOAD_PARAMS} from '../../utils/constants'
 import {reqDeleteFile} from '../../api/index'
+import memoryUtils from '../../utils/memoryUtils'
 
 function getBase64(file) {
     return new Promise((resolve, reject) => {
@@ -23,6 +24,7 @@ function getBase64(file) {
 }
 
 class PicturesWall extends Component {
+
     state = {
         previewVisible: false,
         previewImage: '',
@@ -114,6 +116,20 @@ class PicturesWall extends Component {
         return icon;
     };
 
+    componentDidMount(){
+        const {doc_id, doc_name, doc_path} = this.props.docInfo
+        if(doc_id){
+            this.setState({
+                fileList:[{
+                    uid:doc_id,
+                    name:doc_name,
+                    status:'done',
+                    url:doc_path + '/' + doc_id
+                }]
+            })
+        }
+    }
+
     render() {
         const { previewVisible, previewImage, fileList } = this.state;
         const uploadButton = (
@@ -126,7 +142,7 @@ class PicturesWall extends Component {
             <>
                 <Upload
                     // 上传地址
-                    action="/manage/docs/upload"
+                    action={`/manage/docs/upload?creator_id=${memoryUtils.user._id}`}
                     accept=".pdf"
                     // 文件参数名
                     name={FILE_UPLOAD_PARAMS}
@@ -141,7 +157,7 @@ class PicturesWall extends Component {
                     // 自定义显示icon
                     iconRender={this.handleIconRender}
                 >
-                    {fileList.length >= 8 ? null : uploadButton}
+                    {fileList.length >= 1 ? null : uploadButton}
                 </Upload>
                 {/* 预览对话框 */}
                 <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>

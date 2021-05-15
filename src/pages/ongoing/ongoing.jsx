@@ -4,6 +4,8 @@ import QRCode from 'qrcode.react'
 import BreadcrumbItemCreator from '../../components/breadcrumb-item/index'
 import { reqDocList, reqEndSign } from '../../api/index'
 import dateToString from '../../utils/dateUtils'
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import memoryUtils from '../../utils/memoryUtils'
 // 导入测试数据
 // import testData from '../../config/testDataConfig'
 
@@ -11,6 +13,7 @@ import dateToString from '../../utils/dateUtils'
 const menu = BreadcrumbItemCreator('/manage')
 // let setListData
 let history
+const { confirm } = Modal;
 
 const columns = [
   {
@@ -35,10 +38,12 @@ const columns = [
     width: 100,
     render: (text, item) => {
       const { doc_mode } = item
-      if (doc_mode === 'single') {
+      if(doc_mode === 'single'){
         return '一份一签'
-      } else {
+      } else if(doc_mode === 'multiple ') {
         return '一份多签'
+      } else {
+        return '不限人数'
       }
     }
   },
@@ -54,15 +59,15 @@ const columns = [
   },
   {
     title: '签署状态',
-    dataIndex: 'signed_num',
-    key: 'signed_num',
+    dataIndex: 'allow_re_sign',
+    key: 'allow_re_sign',
     width: 100,
     render: (text, item) => {
       const { re_sign } = item
-      if (re_sign === 'allow') {
-        return '首签'
-      } else {
+      if (re_sign === 're_signed') {
         return '补签'
+      } else {
+        return '首签'
       }
     }
   },
@@ -75,7 +80,7 @@ const columns = [
     render: (text, item) => (
       <Space size="middle">
         <Button size='small' type="primary" onClick={() => showQRCode(item)}>二维码</Button>
-        <Button size='small' type="primary" onClick={() => handleEndClick(item)}>结束</Button>
+        <Button size='small' type="primary" onClick={() => showConfirm(item)}>结束</Button>
       </Space>
     ),
   },
@@ -98,25 +103,33 @@ const showQRCode = item => {
   });
 }
 
-const handleEndClick = async item => {
-  let { doc_id, doc_path, sign_area } = item
-  sign_area = JSON.parse(sign_area)
-  const result = await reqEndSign({ end_time: Date.now(), doc_id, doc_path, sign_area })
-  if (result.status === 0) {
-    message.success('签署已完成')
-    // getDataSource(setListData)
-    // 跳转至完成签署界面
-    history.push('/complete')
-  } else {
-    message.error('操作失败，请重试')
-  }
-}
-
 const getDataSource = async setData => {
-  const result = await reqDocList('ongoing','release_time')
+  const result = await reqDocList('ongoing','release_time', memoryUtils.user._id)
   if (result.status === 0) {
     setData(result.data)
   }
+}
+
+function showConfirm(item) {
+  let { doc_id, doc_path, sign_area } = item
+  sign_area = JSON.parse(sign_area)
+  confirm({
+    title: '是否结束签署?',
+    icon: <ExclamationCircleOutlined />,
+    content: '结束后，部分文档还可以开启补签继续签署。',
+    onOk:async function() {
+      const result = await reqEndSign({ end_time: Date.now(), doc_id, doc_path, sign_area })
+      if (result.status === 0) {
+        message.success('签署已完成')
+        // getDataSource(setListData)
+        // 跳转至完成签署界面
+        history.push('/complete')
+      } else {
+        message.error('操作失败，请重试')
+      }
+    },
+    onCancel() {},
+  });
 }
 
 export default function OnGoing(props) {

@@ -13,7 +13,7 @@ export default class Product extends Component {
       <Switch>
         <Route path='/uploadfile' component={Upload} exact/> {/*路径完全匹配*/}
         <Route path='/uploadfile/doc-editor' component={DocEditor}/>
-        <Redirect to='/upload'/>
+        <Redirect to='/uploadfile'/>
       </Switch>
     )
   }

@@ -1,10 +1,14 @@
 import React, {useState, useEffect} from 'react'
-import { Breadcrumb, Table, Space, Button } from 'antd'
+import { Breadcrumb, Table, Space, Button, Modal, message } from 'antd'
 import BreadcrumbItemCreator from '../../components/breadcrumb-item/index'
-import {reqDocList, reqDownload} from '../../api/index'
+import {reqDocList, reqRepeatSign} from '../../api/index'
 import dateToString from '../../utils/dateUtils'
 import fileDownload from 'js-file-download'
 import Axios from 'axios';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import memoryUtils from '../../utils/memoryUtils'
+
+const { confirm } = Modal;
 // 导入测试数据
 // import testData from '../../config/testDataConfig'
 let history
@@ -35,8 +39,10 @@ const columns = [
         const {doc_mode} = item
         if(doc_mode === 'single'){
           return '一份一签'
-        } else {
+        } else if(doc_mode === 'multiple ') {
           return '一份多签'
+        } else {
+          return '不限人数'
         }
       }
     },
@@ -80,7 +86,7 @@ const columns = [
       align:'center',
       render: (text, item) => (
         <Space size="middle">
-            <Button size='small' type="primary">补签</Button>
+            <Button size='small' type="primary" onClick={() => showPromiseConfirm(item)}>补签</Button>
             <Button size='small' type="primary" onClick={() => showSignDetail(item)}>详情</Button>
             <Button size='small' type="primary" onClick={() => downloadSignDoc(item)}>下载</Button>
         </Space>
@@ -88,7 +94,7 @@ const columns = [
     },
 ]
 const getDataSource = async setData => {
-  const result = await reqDocList('end','end_time')
+  const result = await reqDocList('end','end_time', memoryUtils.user._id)
   if(result.status === 0){
     setData(result.data)
   }
@@ -106,6 +112,25 @@ const downloadSignDoc = async item => {
 
 const showSignDetail = item => {
   history.push('/complete/detail', {...item})
+}
+
+function showPromiseConfirm(item) {
+  const {doc_id} = item
+  confirm({
+    title: '是否开启补签?',
+    icon: <ExclamationCircleOutlined />,
+    content: '每个文档只有一次补签机会，开启后，文档签名将不限制签署人数。',
+    onOk:async function() {
+        const result = await reqRepeatSign(doc_id)
+        if(result.status === 0){
+          message.success('开启补签成功！')
+          history.push('/ongoing')
+        }  else {
+          message.error(result.msg)
+        }
+    },
+    onCancel() {},
+  });
 }
 
 

@@ -85,6 +85,11 @@ export default class SignatureBoard extends React.Component {
                             width={width}
                             height={height}
                             ref={this.canvasRef}
+                            // onClick={e => {
+                            //     console.log('off',e.nativeEvent.offsetX, e.nativeEvent.offsetY)
+                            //     console.log('page',e.nativeEvent.pageX, e.nativeEvent.pageY)
+                            //     console.log('topleft',e.target.offsetWidth, e.target.offsetHeight)
+                            // }}
                         ></canvas>
                     </div>
                     <div className="btn">

@@ -1,10 +1,28 @@
 import React, { useState, useRef } from 'react';
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
-import { Skeleton, Button, message } from 'antd';
+import { Skeleton, Button, message, Modal } from 'antd';
 import './doc-editor.less'
 import { CloseCircleFilled } from '@ant-design/icons';
 import { reqMidRelease, reqRelease } from '../../api/index'
+import QRCode from 'qrcode.react'
 // import sample from '../../static/test.pdf'
+
+const showQRCode = item => {
+    console.log(item)
+    const {doc_name, doc_id, } = item
+    Modal.info({
+      title: doc_name,
+      content: (
+        <QRCode 
+          value={`http://192.168.31.210:3000/user-sign#doc_id=${doc_id}`}
+          size={350}
+        />
+      ),
+      okText:'关闭',
+      width:500,
+      onOk() {},
+    });
+  }
 
 export default function DocEditor(props) {
     // 判断是否传入了参数
@@ -13,12 +31,14 @@ export default function DocEditor(props) {
         props.history.replace('/uploadfile')
     }
     // 取出传递的文档信息
-    const { doc_id, valid_time } = props.location.state
+    const { doc_id, valid_time, doc_name } = props.location.state
+
     const [numPages, setNumPages] = useState(null);
     const [pageNumber, setPageNumber] = useState(1);
     const [signAreaDisable, setSignAreaDisable] = useState('none')
     const [existSignArea, setExistSignArea] = useState(false)
     const [isDocRelease, setIsDocRelease] = useState(false)
+
     const pdfContainerRef = useRef(null)
     const pdfDocRef = useRef(null)
     const signAreaRef = useRef(null)
@@ -107,6 +127,7 @@ export default function DocEditor(props) {
             }
             pdfContainerRef.current.onmouseup = function (event) {
                 pdfContainerRef.current.onmousemove = null
+                pdfContainerRef.current.onmouseup = null
             }
             event.stopPropagation()
         }
@@ -143,13 +164,13 @@ export default function DocEditor(props) {
             // 保存成功
             message.success('签署区域设置保存成功')
             // 跳转页面
-            if(!isDocRelease){
-                props.history.replace('/unpublish')
-            }
+            // if(!isDocRelease){
+            //     props.history.replace('/unpublish')
+            // }
+            console.log(isDocRelease)
             return Promise.resolve('success')
         } else {
-            message.error('区域设置保存失败，请重试')
-            return Promise.reject('failed')
+            message.error(result.msg)
         }
     }
 
@@ -173,12 +194,12 @@ export default function DocEditor(props) {
             const releaseResult = await reqRelease({release_time, end_time, doc_status, doc_id})
             if(releaseResult.status === 0){
                 message.success('文档发布成功')
-                props.history.replace('/ongoing')
+                // props.history.replace('/ongoing')
+                setIsDocRelease(true)
             } else {
-                message.error('文档发布失败，请重试')
+                message.error(releaseResult.msg)
             }
         })
-
     }
 
     return (
@@ -192,6 +213,7 @@ export default function DocEditor(props) {
                 </div>
                 <Button type="primary" onClick={saveSetting}>保存</Button>
                 <Button type="primary" onClick={releaseDoc}>发布</Button>
+                <Button type="primary" onClick={() => showQRCode({doc_name, doc_id})} disabled={!isDocRelease}>二维码</Button>
             </div>
 
             <div className="pdf-container" ref={pdfContainerRef}>

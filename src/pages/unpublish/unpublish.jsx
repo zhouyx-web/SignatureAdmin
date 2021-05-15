@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Breadcrumb, Table, Space, Button, message } from 'antd'
+import { Breadcrumb, Table, Space, Button, message, Modal } from 'antd'
 import BreadcrumbItemCreator from '../../components/breadcrumb-item/index'
 import { reqDocList, reqRelease } from '../../api/index'
 import dateToString from '../../utils/dateUtils'
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+
+import memoryUtils from '../../utils/memoryUtils'
 // 导入测试数据
 // import testData from '../../config/testDataConfig'
 
@@ -10,6 +13,7 @@ import dateToString from '../../utils/dateUtils'
 const menu = BreadcrumbItemCreator('/manage')
 // let setListData
 let history
+const { confirm } = Modal;
 
 const columns = [
   {
@@ -34,8 +38,10 @@ const columns = [
       const { doc_mode } = item
       if (doc_mode === 'single') {
         return '一份一签'
-      } else {
+      } else if (doc_mode === 'multiple ') {
         return '一份多签'
+      } else {
+        return '不限人数'
       }
     }
   },
@@ -55,33 +61,40 @@ const columns = [
     align: 'center',
     render: (text, item) => (
       <Space size="middle">
-        <Button size='small' type="primary">编辑</Button>
-        <Button
-          size='small'
-          type="primary"
-          onClick={async () => {
-            const { valid_time, doc_id } = item
-            const release_time = Date.now()
-            let end_time
-            if (valid_time === 0) {
-              end_time = 0
-            } else { end_time = release_time + valid_time * 60 * 1000 }
-            const result = await reqRelease({ release_time, end_time, doc_id, doc_status: 'ongoing' })
-            if (result.status === 0) {
-              message.success('文档发布成功')
-              // getDataSource(setListData)
-              history.push('/ongoing')
-            } else {
-              message.error('文档发布失败')
-            }
-          }}
-        >发布</Button>
+        <Button size='small' type="primary" onClick={() => history.push('/uploadfile', item)}>编辑</Button>
+        <Button size='small' type="primary" onClick={() => showConfirm(item)}>发布</Button>
       </Space>
     ),
   },
 ]
+
+function showConfirm(item) {
+  const { valid_time, doc_id, doc_name } = item
+  const release_time = Date.now()
+  let end_time
+  if (valid_time === 0) {
+    end_time = 0
+  } else { end_time = release_time + valid_time * 60 * 1000 }
+  confirm({
+    title: '是否发布文档?',
+    icon: <ExclamationCircleOutlined />,
+    content: `文档名:${doc_name}`,
+    onOk: async function () {
+      const result = await reqRelease({ release_time, end_time, doc_id, doc_status: 'ongoing' })
+      if (result.status === 0) {
+        message.success('文档发布成功')
+        // getDataSource(setListData)
+        history.push('/ongoing')
+      } else {
+        message.error('文档发布失败')
+      }
+    },
+    onCancel() { },
+  });
+}
+
 const getDataSource = async setData => {
-  const result = await reqDocList('unpublish', 'create_time')
+  const result = await reqDocList('unpublish', 'create_time', memoryUtils.user._id)
   if (result.status === 0) {
     setData(result.data)
   }
