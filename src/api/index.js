@@ -6,6 +6,10 @@ import ajax from './ajax'
 
 // 登录请求
 export const reqLogin = (username, password) => ajax('/manage/user/login', {username, password}, 'POST')
+// 用户注册
+export const reqRegister = (username, password) => ajax('/manage/user/register', {username, password}, 'POST')
+// 修改密码
+export const reqUpdatePwd = accountInfo => ajax('/manage/user/update', accountInfo, 'POST')
 // 文件删除请求
 export const reqDeleteFile = (doc_id) => ajax('/manage/docs/delete', {doc_id}, 'POST')
 // 文档预发布请求

@@ -28,14 +28,14 @@ const columns = [
     title: '面签名称',
     dataIndex: 'doc_name',
     key: 'doc_name',
-    width: 250,
+    width: 230,
     ellipsis: true,
   },
   {
     title: '面签类型',
     dataIndex: 'doc_mode',
     key: 'doc_mode',
-    width: 100,
+    width: 120,
     render: (text, item) => {
       const { doc_mode } = item
       if(doc_mode === 'single'){

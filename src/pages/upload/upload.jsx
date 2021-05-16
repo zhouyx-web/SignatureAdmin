@@ -47,6 +47,8 @@ export default function Upload(props) {
         console.log(values)
         // 是否已上传文件
         const doc_id = pictureWallRef.current.getFileListDetail()[0]
+        console.log(values.doc_mode, values.doc_mode === 'unlimited')
+        // if(values.doc_mode === 'unlimited') values.max_sign_num = 10000
         if (doc_id) {
             /**
              * 更新以下字段：doc_name, doc_mode, creator_id, max_sign_num, re_sign
@@ -54,7 +56,6 @@ export default function Upload(props) {
              * api reqPrepareRelease; params updateOptions->obj
              */
             const updateOptions = { ...values }
-            
             updateOptions.doc_id = doc_id
             const result = await reqPrepareRelease(updateOptions)
             if (result.status === 0) {
@@ -95,7 +96,7 @@ export default function Upload(props) {
                         }>
                             <Option value='single'>一份一签</Option>
                             <Option value='multiple'>一份多签</Option>
-                            <Option value='unlimited '>不限人数</Option>
+                            <Option value='unlimited'>不限人数</Option>
                         </Select>
                     </Form.Item>
 

@@ -1,16 +1,15 @@
 import React, { useState } from 'react'
 import { Form, Input, Button, Alert, message, } from 'antd';
-import {Link} from 'react-router-dom'
-import { 
+import {
     AntDesignOutlined,
-    UserOutlined, 
+    UserOutlined,
     LockOutlined,
 } from '@ant-design/icons'
+import {Link} from 'react-router-dom'
 
-import './login.less'
-import { reqLogin } from '../../api/index'
+import './rejister.less'
+import { reqRegister } from '../../api/index'
 import memoryUtils from '../../utils/memoryUtils'
-import storageUtils from '../../utils/storageUtils'
 
 //用户名校验规则 
 const accountValidator = (rule, value) => {
@@ -18,52 +17,47 @@ const accountValidator = (rule, value) => {
     // const mailReg = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/
     const usernameReg = /^\w{3,11}$/
     // if( phoneReg.test(value) || mailReg.test(value)){
-    if( usernameReg.test(value)){
+    if (usernameReg.test(value)) {
         return Promise.resolve()
-    }else{
+    } else {
         return Promise.reject("请输入有效的账户")
     }
 }
 // 密码校验规则
 const pwdValidator = (rule, value) => {
     const spaceReg = /[\s]+/
-    if( !value || spaceReg.test(value) ){
+    if (!value || spaceReg.test(value)) {
         return Promise.reject('请输入有效的密码')
-    }else{
+    } else {
         return Promise.resolve()
     }
 }
 
 export default function Login(_window) {
 
-    if(memoryUtils.user.username) _window.history.replace('/')
+    if (memoryUtils.user.username) _window.history.replace('/')
 
-    const [ visible, setVisible ] = useState(false)
-    const [ loading, setLoading ] = useState(false)
-    const [ errmsg, setErrmsg ] = useState('')
+    const [visible, setVisible] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [errmsg, setErrmsg] = useState('')
 
     const handleClose = () => {
         setVisible(false);
     }
 
-    // 账户和密码校验成功，在此处发送请求
+    // 账户和密码校验成功，在此处发送注册请求
     const onFinish = async (values) => {
         setLoading(true) // 按钮加载状态
         setVisible(false) // 登录失败提示框
         const { username, password } = values
-        const loginResult = await reqLogin(username, password)
+        const result = await reqRegister(username, password)
         setLoading(false)
-        if(!loginResult.status){// login success
-            message.success('登录成功！')
-            const {data} = loginResult
-            // 将用户信息存入内存与localStorage
-            memoryUtils.user = data
-            storageUtils.saveUser(data)
-            // 跳转至主页面 一定要将用户信息存入之后再跳转。因为在主界面中也存在判断用户是否存在，此时用户还未存储，就又跳转到登录界面
-            _window.history.replace('/')
+        if (!result.status) {// login success
+            message.success('注册成功')
+            _window.history.replace('/login')
         } else {//login failed
             setVisible(true)
-            setErrmsg(loginResult.msg)
+            setErrmsg(result.msg)
         }
     };
 
@@ -77,24 +71,24 @@ export default function Login(_window) {
                 <h1>微信签署文件发布平台</h1>
             </div>
             <div className="login-content">
-                <h2>用户登录</h2>
+                <h2>用户注册</h2>
 
-                <div className="alert-container" style={ visible ? { height:'60px' } : { height:'0' } }>
+                <div className="alert-container" style={visible ? { height: '60px' } : { height: '0' }}>
                     {
                         visible ? (
-                            <Alert 
-                                message={errmsg} 
-                                type="error" 
-                                showIcon 
+                            <Alert
+                                message={errmsg}
+                                type="error"
+                                showIcon
                                 closable
                                 onClose={handleClose}
                             />
                         ) : null
                     }
                 </div>
-                
+
                 <Form
-                    name="loginForm"
+                    name="registerForm"
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                 >
@@ -103,7 +97,7 @@ export default function Login(_window) {
                         validateFirst="true"
                         rules={[{ validator: accountValidator }]}
                     >
-                        <Input 
+                        <Input
                             placeholder="数字字母下划线3-11位"
                             prefix={<UserOutlined className="site-form-item-icon" />}
                         />
@@ -114,15 +108,39 @@ export default function Login(_window) {
                         validateFirst="true"
                         rules={[{ validator: pwdValidator }]}
                     >
+                        <Input.Password
+                            placeholder="请输入注册密码"
+                            prefix={<LockOutlined className="site-form-item-icon" />}
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="confirm"
+                        dependencies={['password']}
+                        rules={[
+                            {
+                                required: true,
+                                message: '密码不能为空',
+                            },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    if (!value || getFieldValue('password') === value) {
+                                        return Promise.resolve();
+                                    }
+                                    return Promise.reject(new Error('两次密码不一致'));
+                                },
+                            }),
+                        ]}
+                    >
                         <Input.Password 
-                            placeholder="请输入登录密码"
+                            placeholder="确认密码"
                             prefix={<LockOutlined className="site-form-item-icon" />}
                         />
                     </Form.Item>
 
                     <Form.Item>
-                        <Button block type="primary"  htmlType="submit" {...{loading}} >登录</Button>
-                        <Link to="/register">现在注册！</Link>
+                        <Button block type="primary" htmlType="submit" {...{ loading }} >注册</Button>
+                        <Link to="/login">去登录！</Link>
                     </Form.Item>
                 </Form>
             </div>
