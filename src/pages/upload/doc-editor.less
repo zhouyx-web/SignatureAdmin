@@ -1,0 +1,50 @@
+.doc-editor-container {
+    margin-top: 20px;
+    .top-control-panel{
+        margin: 10px auto;
+        width: 600px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        .page-controls{
+            width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+    }
+    .pdf-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .pdf-doc{
+            position: relative;
+            .sign-area{
+                position: absolute;
+                top: 30px;
+                left: 30px;
+                cursor: pointer;
+                background-color: rgba(122, 191, 255, 0.5);
+                width: 200px;
+                height: 100px;
+                .resize{
+                    cursor: nwse-resize;
+                    position: absolute;
+                    height: 10px;
+                    width: 10px;
+                    bottom: 0;
+                    right: 0;
+                    background: linear-gradient(135deg, rgba(0, 0, 0, 0) 8px, rgba(0, 0, 0, 0.5) 8px);                
+                }
+                .closed{
+                    position: absolute;
+                    height: 10px;
+                    width: 10px;
+                    top: -6px;
+                    right: -6px;
+                    color: red;
+                }
+            }
+        }
+    }
+}
