@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react'
+import React, {useState } from 'react'
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
-import axios from 'axios'
+// import axios from 'axios'
 import {
     Form,
     Select,
@@ -8,12 +8,11 @@ import {
     Breadcrumb,
     Input,
     Button,
-    message
+    message,
 } from 'antd'
 import BreadcrumbItemCreator from '../../components/breadcrumb-item/index'
-import memoryUtils from '../../utils/memoryUtils'
-import { reqPrepareRelease } from '../../api/index'
 const { Option } = Select
+const { TextArea } = Input
 
 // 生成可下拉的面包屑菜单
 const menu = BreadcrumbItemCreator('/creator')
@@ -56,7 +55,7 @@ export default function Upload(props) {
         const pdfDoc = await PDFDocument.create()
         const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
         const page = pdfDoc.addPage()
-        const { width, height } = page.getSize()
+        const { height } = page.getSize()
         const fontSize = 30
         page.drawText('Creating PDFs in JavaScript is awesome!', {
             x: 50,
@@ -71,10 +70,11 @@ export default function Upload(props) {
             type: 'application/pdf'
         });
 
-        const formData =  new FormData()
+        const formData = new FormData()
         formData.append('file', myFile)
-        console.log(typeof myFile, myFile, typeof pdfBytes, pdfBytes, typeof pdfBytes.buffer, pdfBytes.buffer)
-        axios.post('/manage/docs/upload', formData, { headers: {'Content-type':'multipart/form-data'} })
+        message.error('此项功能不能使用')
+        // console.log(typeof myFile, myFile, typeof pdfBytes, pdfBytes, typeof pdfBytes.buffer, pdfBytes.buffer)
+        // axios.post('/manage/docs/upload', formData, { headers: { 'Content-type': 'multipart/form-data' } })
     }
 
     return (
@@ -98,6 +98,17 @@ export default function Upload(props) {
                     <div className="title-style">文档标题:</div>
                     <Form.Item name="doc_name" rules={[{ validator: fileNameValidator }]}>
                         <Input allowClear placeholder="签署主题名" />
+                    </Form.Item>
+                    <Form.Item 
+                        name="doc_content" 
+                        rules={[{ required:true,message:"填写文档内容" }]}
+                    >
+                        <TextArea 
+                            placeholder="输入文档内容" 
+                            allowClear 
+                            maxLength={100}
+                            showCount
+                        />
                     </Form.Item>
 
                     <div className="title-style">可选项:</div>

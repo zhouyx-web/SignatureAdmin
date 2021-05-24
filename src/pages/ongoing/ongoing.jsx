@@ -40,7 +40,7 @@ const columns = [
       const { doc_mode } = item
       if(doc_mode === 'single'){
         return '一份一签'
-      } else if(doc_mode === 'multiple ') {
+      } else if(doc_mode === 'multiple') {
         return '一份多签'
       } else {
         return '不限人数'
